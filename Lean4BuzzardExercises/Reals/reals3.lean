@@ -6,7 +6,6 @@ Working with sequences of real numbers
 Introducing tactic rewrite (rw)
 -/
 
-namespace reals3
 
 -- Definition of a(n) tends to t when n tends to infinity
 def TendsTo (a : ℕ → ℝ) (t : ℝ) : Prop :=
