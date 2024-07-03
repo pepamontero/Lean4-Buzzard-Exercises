@@ -1,6 +1,10 @@
 import Mathlib.Tactic
 import Lean4BuzzardExercises.Reals.reals3
 
+/-
+REALS 05
+More results on limits of sequences
+-/
 
 theorem tendsTo_neg {a : ℕ → ℝ} {t : ℝ} (ha : TendsTo a t) : TendsTo (fun n ↦ -a n) (-t) := by
   rw [tendsTo_def]
