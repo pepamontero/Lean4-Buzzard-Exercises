@@ -16,11 +16,9 @@ theorem tendsTo_neg {a : ℕ → ℝ} {t : ℝ} (ha : TendsTo a t) : TendsTo (fu
   ring_nf
 
   -- cases for exist!!
-  cases hε with
-  | intro B hB =>
-    exists B
-    intros n hn
-    rw [h2]
-    apply hB
-    exact hn
-  done
+  cases' hε with B hB
+  use B
+  intros n hn
+  rw [h2]
+  apply hB
+  exact hn
