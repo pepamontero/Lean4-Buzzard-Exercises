@@ -5,10 +5,6 @@ REALS 04
 Introducing tactics exact? & linarith
 -/
 
-theorem see_exact_questionmark (x : ℝ) : |-x| = |x| := by
-  -- use exact? then hover over it to see suggestions!
-  exact abs_neg x
-
 example (x y : ℝ) : |x - y| = |y - x| := by
   exact abs_sub_comm x y
 
