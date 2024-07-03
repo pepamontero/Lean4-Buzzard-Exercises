@@ -322,3 +322,25 @@ theorem tendsTo_zero_mul_tendsTo_zero {a b : ℕ → ℝ} (ha : TendsTo a 0) (hb
   rw [abs_mul]
   rw [← square_of_square_root hε]
   exact mul_lt_mul_of_lt_of_lt'' (by exact Real.sqrt_pos_of_pos hε) (by exact abs_nonneg (b n)) hB1 hB2
+
+
+/-------------- 8 --------------
+If `a(n)` tends to `t` and `b(n)` tends to `u` then
+`a(n)*b(n)` tends to `t*u`.
+-/
+
+theorem tendsTo_mul (a b : ℕ → ℝ) (t u : ℝ) (ha : TendsTo a t) (hb : TendsTo b u) :
+    TendsTo (fun n ↦ a n * b n) (t * u) := by
+
+  rw [tendsTo_sub_lim_iff]
+  rw [tendsTo_def] at *
+
+  intro ε hε
+
+  have h : (n : ℕ) → a n * b n - t * u - 0 = (a n - t) * (b n - u) + t * (b n - u) + (a n - t) * u
+  intro n
+  ring_nf
+
+  simp [h]
+
+  sorry
