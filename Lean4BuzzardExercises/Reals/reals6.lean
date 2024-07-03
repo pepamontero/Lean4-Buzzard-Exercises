@@ -6,7 +6,10 @@ REALS 06
 More results on limits of sequences
 -/
 
-/-- If `a(n)` tends to `t` then `37 * a(n)` tends to `37 * t`-/
+/-------------- 1 --------------
+If `a(n)` tends to `t` then `37 * a(n)` tends to `37 * t`
+-/
+
 theorem tendsTo_thirtyseven_mul (a : ℕ → ℝ) (t : ℝ) (h : TendsTo a t) :
     TendsTo (fun n ↦ 37 * a n) (37 * t) := by
 
@@ -22,6 +25,12 @@ theorem tendsTo_thirtyseven_mul (a : ℕ → ℝ) (t : ℝ) (h : TendsTo a t) :
   linarith
   linarith
 
+
+/-------------- 2 --------------
+If `a(n)` tends to `t` and `c` is a positive constant then
+`c * a(n)` tends to `c * t`.
+-/
+
 -- AUX
 -- If x ≠ 0, x * x⁻¹ = 1
 theorem nonneg_inverse_mul_eq_identity {x : ℝ} (h : ¬ x = 0): 1 = x * x⁻¹ := by
@@ -29,8 +38,7 @@ theorem nonneg_inverse_mul_eq_identity {x : ℝ} (h : ¬ x = 0): 1 = x * x⁻¹ 
   ring
   exact Ne.isUnit h
 
-/-- If `a(n)` tends to `t` and `c` is a positive constant then
-`c * a(n)` tends to `c * t`. -/
+
 theorem tendsTo_pos_const_mul {a : ℕ → ℝ} {t : ℝ} (h : TendsTo a t) {c : ℝ} (hc : 0 < c) :
     TendsTo (fun n ↦ c * a n) (c * t) := by
 
@@ -69,7 +77,7 @@ theorem tendsTo_pos_const_mul {a : ℕ → ℝ} {t : ℝ} (h : TendsTo a t) {c :
   rw [hB2] at hB
   exact hB.left
 
-  -- PARTE 2  → I want to rewrite hB.right so it looks like my goal
+  -- PART 2  → I want to rewrite hB.right so it looks like my goal
   have hBR : a n - t < ε / c
   exact hB.right
   rw [← mul_lt_mul_iff_of_pos_right hc] at hBR
@@ -87,3 +95,38 @@ theorem tendsTo_pos_const_mul {a : ℕ → ℝ} {t : ℝ} (h : TendsTo a t) {c :
   rw [hB1] at hBR
   rw [hB2] at hBR
   exact hBR
+
+
+/-------------- 3 --------------
+If `a(n)` tends to `t` and `c` is a negative constant then
+`c * a(n)` tends to `c * t`. -/
+
+theorem tendsTo_neg_const_mul {a : ℕ → ℝ} {t : ℝ} (h : TendsTo a t) {c : ℝ} (hc : c < 0) :
+    TendsTo (fun n ↦ c * a n) (c * t) := by
+
+  -- The idea of the proof is using -c > 0 and last result
+
+  have hc1 : -c > 0
+  linarith
+
+  have ha : TendsTo (- a) (-t)
+  apply tendsTo_neg
+  exact h
+
+  have ha2 : TendsTo (fun n => (- c) * (- a n)) ((- c) * (- t))
+  apply tendsTo_pos_const_mul
+  exact ha
+  exact hc1
+
+  rw [tendsTo_def]
+  rw [tendsTo_def] at ha2
+
+  intro ε hε
+  specialize ha2 ε hε
+  cases' ha2 with B hB
+  use B
+  intro n hn
+  specialize hB n hn
+  rw [neg_mul_neg c (a n)] at hB
+  rw [neg_mul_neg c t] at hB
+  exact hB
