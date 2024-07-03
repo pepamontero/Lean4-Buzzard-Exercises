@@ -24,7 +24,6 @@ def Real.IsEven (r : ℝ) :=
 
 example : ∀ x, x ∈ {r : ℝ | Real.IsEven r} := by
   intro x
-  rw [Set.mem_def]
   use (x / 2)
   ring
 
@@ -34,5 +33,4 @@ example : ∀ x, x ∉ {r : ℝ | 0 < r ∧ r < 0} := by
   rw [Set.mem_def] at hn
   have h : x > 0 ∧ x < 0
   exact hn
-  apply not_lt_of_gt h.left
-  exact h.right
+  linarith
