@@ -25,7 +25,6 @@ theorem tendsTo_thirtyseven_mul (a : ℕ → ℝ) (t : ℝ) (h : TendsTo a t) :
   linarith
   linarith
 
-
 /-------------- 2 --------------
 If `a(n)` tends to `t` and `c` is a positive constant then
 `c * a(n)` tends to `c * t`.
@@ -45,14 +44,8 @@ theorem tendsTo_pos_const_mul {a : ℕ → ℝ} {t : ℝ} (h : TendsTo a t) {c :
   rw [tendsTo_def] at *
   intro ε hε
 
-  -- show ε / c > 0
-  have hεc : ε / c > 0
-  apply Real.mul_pos
-  exact hε
-  exact inv_pos_of_pos hc
-
   -- use ε' = ε / c, choose B for that ε'
-  specialize h (ε / c) hεc
+  specialize h (ε / c) (by exact div_pos hε hc)
   cases' h with B hB
   use B
   intro n hn
@@ -130,3 +123,75 @@ theorem tendsTo_neg_const_mul {a : ℕ → ℝ} {t : ℝ} (h : TendsTo a t) {c :
   rw [neg_mul_neg c (a n)] at hB
   rw [neg_mul_neg c t] at hB
   exact hB
+
+/-AUX-/
+theorem tendsTo_zero_mul {a : ℕ → ℝ} {t : ℝ} (h : TendsTo a t):
+    TendsTo (fun n ↦ 0 * a n) 0 := by
+  rw [tendsTo_def] at *
+  intro ε hε
+  specialize h ε hε
+  cases' h with B hB
+  use B
+  intro n _
+  ring_nf
+  rw [abs_lt] at *
+  constructor
+  linarith
+  linarith
+
+theorem tendsTo_zero_zero : TendsTo (fun _ ↦ 0) 0 := by
+  rw [tendsTo_def]
+  intro ε hε
+  use 1
+  intro n _
+  ring_nf
+  rw [abs_lt]
+  constructor
+  linarith
+  linarith
+
+theorem real_tricotomy {x : ℝ} : x = 0 ∨ x > 0 ∨ x < 0 := by
+  have h : x = 0 ∨ ¬ x = 0
+  exact eq_or_ne x 0
+  cases' h with c1 c2
+  left
+  exact c1
+
+  have h : x ≥ 0 ∨ x ≤ 0
+  exact LinearOrder.le_total 0 x
+  cases' h with h1 h2
+  right
+  left
+  exact lt_of_le_of_ne h1 fun a => c2 (id (Eq.symm a))
+  right
+  right
+  exact lt_of_le_of_ne h2 c2
+
+
+/-------------- 4 --------------
+If `a(n)` tends to `t` and `c` is a constant then `c * a(n)` tends
+to `c * t`.
+-/
+
+theorem tendsTo_const_mul {a : ℕ → ℝ} {t : ℝ} (c : ℝ) (h : TendsTo a t) :
+    TendsTo (fun n ↦ c * a n) (c * t) := by
+
+  have hc : c = 0 ∨ c > 0 ∨ c < 0
+  exact real_tricotomy
+
+  -- case c = 0
+  cases' hc with hc1 hc2
+  rw [hc1]
+  ring_nf
+  apply tendsTo_zero_zero
+
+  -- case c > 0
+  cases' hc2 with hc1 hc2
+  apply tendsTo_pos_const_mul
+  exact h
+  exact hc1
+
+  -- case c < 0
+  apply tendsTo_neg_const_mul
+  exact h
+  exact hc2
