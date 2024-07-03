@@ -3,6 +3,7 @@ import Lean4BuzzardExercises.Functions.functions1
 
 /-
 FUNCTIONS 03
+Results about surjectivity and injectivity in composition
 -/
 
 /-
