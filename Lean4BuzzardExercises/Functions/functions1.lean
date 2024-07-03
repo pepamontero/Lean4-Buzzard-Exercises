@@ -4,6 +4,7 @@ variable (X Y Z : Type)
 
 /-
 FUNCTIONS 01
+Introduction to the concepts injective and surjective in Lean
 -/
 
 -- DEFINITIONS

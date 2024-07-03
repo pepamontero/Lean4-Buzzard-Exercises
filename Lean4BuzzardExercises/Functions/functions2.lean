@@ -1,4 +1,8 @@
--- NOTE: no exercises on this section
+/-
+FUNCTIONS 02
+NOTE: no exercises on this section
+Introduction to inductive types in Lean
+-/
 
 import Mathlib.Tactic
 
