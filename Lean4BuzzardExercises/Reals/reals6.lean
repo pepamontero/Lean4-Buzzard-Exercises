@@ -195,3 +195,130 @@ theorem tendsTo_const_mul {a : ℕ → ℝ} {t : ℝ} (c : ℝ) (h : TendsTo a t
   apply tendsTo_neg_const_mul
   exact h
   exact hc2
+
+
+/-------------- 5 --------------
+If `a(n)` tends to `t` and `c` is a constant then `a(n) * c` tends
+to `t * c`.
+-/
+
+theorem tendsTo_mul_const {a : ℕ → ℝ} {t : ℝ} (c : ℝ) (h : TendsTo a t) :
+    TendsTo (fun n ↦ a n * c) (t * c) := by
+
+  have h2 : TendsTo (fun n => c * a n) (c * t)
+  apply tendsTo_const_mul
+  exact h
+
+  rw [tendsTo_def] at *
+  intro ε hε
+  specialize h2 ε hε
+  cases' h2 with B hB
+  use B
+  intro n hn
+  specialize hB n hn
+
+  rw [CommMonoid.mul_comm (a n) c]
+  rw [CommMonoid.mul_comm t c]
+  exact hB
+
+
+/-------------- 6 --------------
+If `a(n)-b(n)` tends to `t` and `b(n)` tends to `u` then
+`a(n)` tends to `t + u`.
+-/
+
+theorem tendsTo_of_tendsTo_sub {a b : ℕ → ℝ} {t u : ℝ} (h1 : TendsTo (fun n ↦ a n - b n) t)
+    (h2 : TendsTo b u) : TendsTo a (t + u) := by
+
+  have h : TendsTo (fun n => (a n - b n) + b n) (t + u)
+  apply tendsTo_add
+  exact h1
+  exact h2
+
+  rw [tendsTo_def]
+  rw [tendsTo_def] at h
+  intro ε hε
+  specialize h ε hε
+  cases' h with B hB
+  use B
+  intro n hn
+  specialize hB n hn
+  rw [sub_add_cancel (a n) (b n)] at hB
+  exact hB
+
+
+/-------------- 7 --------------
+If `a(n)` tends to `t` then `a(n)-t` tends to `0`.
+-/
+
+theorem tendsTo_sub_lim_iff {a : ℕ → ℝ} {t : ℝ} : TendsTo a t ↔ TendsTo (fun n ↦ a n - t) 0 := by
+
+  constructor
+
+  -- =>
+  intro h
+  rw [← add_right_neg t]
+  apply tendsTo_add_const
+  exact h
+
+  -- <=
+  intro h
+  rw [tendsTo_def] at *
+  intro ε hε
+  specialize h ε hε
+  cases' h with B hB
+  use B
+  intro n hn
+  specialize hB n hn
+  rw [sub_zero (a n - t)] at hB
+  exact hB
+
+
+/-AUX-/
+theorem square_of_square_root {x : ℝ} (hx : x > 0): Real.sqrt x * Real.sqrt x = x := by
+  rw [← Real.sqrt_mul]
+  rw [Real.sqrt_mul_self_eq_abs]
+  exact abs_of_pos hx
+  exact le_of_lt hx
+
+theorem mul_lt_mul_of_lt_of_lt'' {x y z w : ℝ} (hy : y > 0) (hz : z ≥ 0)
+    (h1 : x < y) (h2 : z < w) : x * z < y * w := by
+
+  have h : z > 0 ∨ z = 0
+  exact LE.le.gt_or_eq hz
+  cases' h with hz1 hz2
+
+  exact mul_lt_mul_of_lt_of_lt' h1 h2 hy hz1
+
+  rw [hz2]
+  ring_nf
+  have hw : w > 0
+  rw [← hz2]
+  exact h2
+  exact Real.mul_pos hy hw
+
+
+/-------------- 8 --------------
+If `a(n)` and `b(n)` both tend to zero, then their product tends
+to zero.
+-/
+
+theorem tendsTo_zero_mul_tendsTo_zero {a b : ℕ → ℝ} (ha : TendsTo a 0) (hb : TendsTo b 0) :
+    TendsTo (fun n ↦ a n * b n) 0 := by
+
+  rw [tendsTo_def] at *
+  intro ε hε
+  specialize ha (Real.sqrt ε) (by exact Real.sqrt_pos_of_pos hε)
+  specialize hb (Real.sqrt ε) (by exact Real.sqrt_pos_of_pos hε)
+  cases' ha with B1 hB1
+  cases' hb with B2 hB2
+  use max B1 B2
+  intro n hn
+  rw [max_le_iff] at hn
+  specialize hB1 n hn.left
+  specialize hB2 n hn.right
+  ring_nf
+  rw [sub_zero] at *
+  rw [abs_mul]
+  rw [← square_of_square_root hε]
+  exact mul_lt_mul_of_lt_of_lt'' (by exact Real.sqrt_pos_of_pos hε) (by exact abs_nonneg (b n)) hB1 hB2
