@@ -52,7 +52,7 @@ example : A ∩ ∅ = ∅ := by
 example : A ∪ univ = univ := by
   ext x
   rw [mem_union_iff]
-  constructor <;> intro h
+  constructor <;> intro
 
   trivial
 
