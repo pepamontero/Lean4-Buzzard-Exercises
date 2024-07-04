@@ -54,24 +54,16 @@ example : id ⁻¹' S = S := by
 
 example : id '' S = S := by
   ext x
-
-  have h1 : (x : X) → id x = x
-  intro h'
-  rfl
-
   constructor <;> intro h
 
   -- id '' S ⊆ S
   cases' h with w hw
 
   have h2 : id w = x ↔ w = x
-  constructor <;> intro h3
-  rw [← h1 w]
-  exact h3
-  rw [h1]
-  exact h3
+  exact Eq.congr_right (by rfl)
 
   cases' hw with hw1 hw2
+
   rw [h2] at hw2
   rw [← hw2]
   exact hw1
@@ -81,12 +73,6 @@ example : id '' S = S := by
   constructor
   exact h
   rfl
-
-
-
-
-
-
 
 
 -- Now let's try composition.
