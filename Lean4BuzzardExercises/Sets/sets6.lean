@@ -41,17 +41,53 @@ example : f '' S ⊆ T ↔ S ⊆ f ⁻¹' T := by
 
   -- <=
   intro h y hy
-
   cases' hy with x hx
   rw [← hx.right]
   apply h
   exact hx.left
 
 
-example : id ⁻¹' S = S := by sorry
+example : id ⁻¹' S = S := by
+  ext x
+  constructor <;> intro h <;> exact h
 
--- pushforward is a little trickier. You might have to `ext x, split`.
-example : id '' S = S := by sorry
+
+example : id '' S = S := by
+  ext x
+
+  have h1 : (x : X) → id x = x
+  intro h'
+  rfl
+
+  constructor <;> intro h
+
+  -- id '' S ⊆ S
+  cases' h with w hw
+
+  have h2 : id w = x ↔ w = x
+  constructor <;> intro h3
+  rw [← h1 w]
+  exact h3
+  rw [h1]
+  exact h3
+
+  cases' hw with hw1 hw2
+  rw [h2] at hw2
+  rw [← hw2]
+  exact hw1
+
+  -- S ⊆ id '' S
+  use x
+  constructor
+  exact h
+  rfl
+
+
+
+
+
+
+
 
 -- Now let's try composition.
 variable (Z : Type) (g : Y → Z) (U : Set Z)
