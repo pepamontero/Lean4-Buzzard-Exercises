@@ -42,21 +42,12 @@ example : f '' S ⊆ T ↔ S ⊆ f ⁻¹' T := by
   -- <=
   intro h y hy
 
-  have h1 : ∃ (x : X), x ∈ S ∧ f x = y
-  exact hy
-
-  cases' h1 with x hx
-
-  have h2 : x ∈ f ⁻¹' T
+  cases' hy with x hx
+  rw [← hx.right]
   apply h
   exact hx.left
-  rw [← hx.right]
-  exact h2
 
 
-
--- Pushforward and pullback along the identity map don't change anything
--- pullback is not so hard
 example : id ⁻¹' S = S := by sorry
 
 -- pushforward is a little trickier. You might have to `ext x, split`.
