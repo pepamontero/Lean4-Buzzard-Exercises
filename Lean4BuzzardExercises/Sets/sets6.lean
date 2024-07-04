@@ -15,17 +15,45 @@ theorem pullback_def (X Y : Type) (f : X → Y) (T : Set Y) :
     f ⁻¹' (T) = {x : X | f x ∈ T} := by
   rfl
 
+theorem member_set_iff (X : Type) (x : X) (P : X → Bool) : x ∈ {y : X | P y} ↔ P x := by
+  rfl
+
 example : S ⊆ f ⁻¹' (f '' S) := by
   intro x h
-
   rw [pushback_def, pullback_def]
+  use x
 
 
+example : f '' (f ⁻¹' T) ⊆ T := by
+  intro y h
+  rw [pushback_def, pullback_def] at h
+  cases' h with x hx
+  rw [← hx.right]
+  exact hx.left
 
-example : f '' (f ⁻¹' T) ⊆ T := by sorry
+example : f '' S ⊆ T ↔ S ⊆ f ⁻¹' T := by
+  constructor
 
--- `library_search` will do this but see if you can do it yourself.
-example : f '' S ⊆ T ↔ S ⊆ f ⁻¹' T := by sorry
+  -- =>
+  intro h x hx
+  apply h
+  use x
+
+  -- <=
+  intro h y hy
+
+  have h1 : ∃ (x : X), x ∈ S ∧ f x = y
+  exact hy
+
+  cases' h1 with x hx
+
+  have h2 : x ∈ f ⁻¹' T
+  apply h
+  exact hx.left
+  rw [← hx.right]
+  exact h2
+
+
 
 -- Pushforward and pullback along the identity map don't change anything
 -- pullback is not so hard
