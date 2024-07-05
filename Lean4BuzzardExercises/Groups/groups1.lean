@@ -54,17 +54,34 @@ example {a b c : G} (h1 : b * a = 1) (h2 : a * c = 1) : b = c := by
 
   exact h
 
+
 example : a * b = 1 ↔ a⁻¹ = b := by
-  sorry
+  constructor <;> intro h
+
+  rw [← LeftCancelMonoid.mul_one (a⁻¹)]
+  rw [← h]
+  rw [← mul_assoc]
+  rw [inv_mul_self]
+  exact LeftCancelMonoid.one_mul b
+
+  rw [← h]
+  exact mul_inv_self a
+
 
 example : (1 : G)⁻¹ = 1 := by
-  sorry
+  rw [← LeftCancelMonoid.mul_one (1⁻¹)]
+  exact inv_mul_self 1
 
 example : a⁻¹⁻¹ = a := by
-  sorry
+  rw [← LeftCancelMonoid.mul_one (a⁻¹⁻¹)]
+  rw [← inv_mul_self a]
+  rw [← mul_assoc]
+  rw [inv_mul_self]
+  exact LeftCancelMonoid.one_mul a
 
 example : (a * b)⁻¹ = b⁻¹ * a⁻¹ := by
   sorry
+
 
 /-
 
