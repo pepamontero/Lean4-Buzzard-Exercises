@@ -100,9 +100,20 @@ example : (a * b)⁻¹ = b⁻¹ * a⁻¹ := by
 example : (b⁻¹ * a⁻¹)⁻¹ * 1⁻¹⁻¹ * b⁻¹ * (a⁻¹ * a⁻¹⁻¹⁻¹) * a = 1 := by
   group
 
--- Try this trickier problem: if g^2=1 for all g in G, then G is abelian
+
 example (h : ∀ g : G, g * g = 1) : ∀ g h : G, g * h = h * g := by
   intro e g
 
   rw [← LeftCancelMonoid.mul_one (e * g)]
-  rw []
+  rw [← mul_inv_self g]
+  rw [mul_assoc]
+  rw [← mul_assoc g g (g⁻¹)]
+  rw [h]
+  rw [← mul_assoc]
+  rw [← mul_inv_self e]
+  rw [← mul_assoc]
+  rw [h]
+  rw [LeftCancelMonoid.one_mul]
+  rw [← DivisionMonoid.mul_inv_rev g e]
+  rw [← mul_eq_one_iff_inv_eq]
+  exact h (g * e)
