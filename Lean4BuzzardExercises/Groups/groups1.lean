@@ -1,4 +1,4 @@
-import Mathlib.Tactic -- imports all the Lean tactics
+import Mathlib.Tactic
 
 /-
 GROUPS 01
@@ -91,15 +91,12 @@ example : a⁻¹⁻¹ = a := by
   rw [inv_mul_self]
   exact LeftCancelMonoid.one_mul a
 
-
 example : (a * b)⁻¹ = b⁻¹ * a⁻¹ := by
   -- Note: can be solved by `group`
   exact DivisionMonoid.mul_inv_rev a b
 
-
 example : (b⁻¹ * a⁻¹)⁻¹ * 1⁻¹⁻¹ * b⁻¹ * (a⁻¹ * a⁻¹⁻¹⁻¹) * a = 1 := by
   group
-
 
 example (h : ∀ g : G, g * g = 1) : ∀ g h : G, g * h = h * g := by
   intro e g
