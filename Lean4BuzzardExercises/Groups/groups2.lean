@@ -49,41 +49,41 @@ theorem mul_inv_self (a : G) : a * a⁻¹ = 1 := by
 end WeakGroup
 
 
-/-
-
-If you want to take this further: prove that if we make
-a new class `BadGroup` by replacing
-`one_mul` by `mul_one` in the definition of `weak_group`
-then it is no longer true that you can prove `mul_inv_self`;
-there are structures which satisfy `mul_assoc`, `mul_one`
-and `inv_mul_self` but which really are not groups.
-Can you find an example? Try it on paper first.
-
--/
--- claim: not a group in general
+-- new definition Bad Group. We want to prove that not all bad groups are groups
 class BadGroup (G : Type) extends One G, Mul G, Inv G : Type where
   mul_assoc : ∀ a b c : G, a * b * c = a * (b * c)
   mul_one : ∀ a : G, a * 1 = a
   inv_mul_self : ∀ a : G, a⁻¹ * a = 1
 
--- `Bool` is a type with two terms, `Bool.true` and `Bool.false`. See if you can make it into
--- a bad group which isn't a group!
+
 instance : One Bool :=
-  ⟨sorry⟩
+  ⟨Bool.true⟩
 
 instance : Mul Bool :=
-  ⟨sorry⟩
+  ⟨fun x _ ↦ x⟩
 
 instance : Inv Bool :=
-  ⟨sorry⟩
+  ⟨fun _ ↦ Bool.true⟩
 
 instance : BadGroup Bool where
-  mul_assoc := sorry
-  -- `decide`, might be able to do this
-  mul_one := sorry
-  -- decide
-  inv_mul_self := sorry
-  -- decide
+  mul_assoc := by
+    -- `decide`, or:
+    intro a b c
+    cases' a <;> cases' b <;> cases' c
+    all_goals trivial
+  mul_one := by
+    -- `decide`, or:
+    intro a
+    cases' a
+    all_goals trivial
+  inv_mul_self := by
+    -- `decide`, or:
+    intro a
+    cases' a
+    all_goals trivial
 
-example : ¬∀ a : Bool, 1 * a = a := by sorry
--- decide
+example : ¬∀ a : Bool, 1 * a = a := by
+  -- `decide`, or:
+  by_contra h
+  specialize h Bool.false
+  exact (Bool.eq_not_self (1 * false)).mp h
