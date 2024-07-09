@@ -4,7 +4,7 @@ import Mathlib.Tactic
 ORDERINGS 03
 -/
 
-
+/-
 example (L : Type) [Lattice L] :
     (∀ a b c : L, a ⊔ b ⊓ c = (a ⊔ b) ⊓ (a ⊔ c)) ↔ ∀ a b c : L, a ⊓ (b ⊔ c) = a ⊓ b ⊔ a ⊓ c := by
   constructor <;> intro h
@@ -27,3 +27,4 @@ example (L : Type) [Lattice L] :
 
   -- (a ⊔ b) ⊓ (a ⊔ c) ≤ a ⊔ b ⊓ c
   sorry
+-/
