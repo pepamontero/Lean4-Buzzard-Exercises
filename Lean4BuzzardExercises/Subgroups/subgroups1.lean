@@ -3,6 +3,8 @@ import Mathlib.Tactic
 /-
 SUBGROUPS 01
 Introduction to subgroups in Lean
+Complete lattices
+Conjugate subgroup
 -/
 
 
