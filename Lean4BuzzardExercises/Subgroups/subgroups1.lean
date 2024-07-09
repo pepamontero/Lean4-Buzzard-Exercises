@@ -57,37 +57,50 @@ example : a ∈ (⊥ : Subgroup G) ↔ a = 1 :=
 example : a ∈ (⊤ : Subgroup G) :=
   Subgroup.mem_top a
 
+
 /-
-
-# Conjugating a subgroup by an element.
-
-Let's define the conjugate `xHx⁻¹` of a subgroup `H` by an element `x`. To do this we
-are going to have to know how to *make* subgroups, not just prove things about subgroups.
-
-To create a subgroup of `G`, you need to give a subset of `G` and then a proof
-that the subset satisfies the three axioms `one_mem`, `inv_mem` and `mul_mem` for subgroups.
-If `H : subgroup G` and `x : G` then the *conjugate* of `H` by `x` is
-the set `{a : G | ∃ h, h ∈ H ∧ a = x * h * x⁻¹}`. So let's show that this set
-satisfies the axioms for a subgroup.
-
+CONJUGATE SUBGROUP
+We want to show that the conjugate `xHx⁻¹ = {a : G | ∃ h, h ∈ H ∧ a = x * h * x⁻¹}`
+is a subgroup of G
 -/
+
 variable {G H} {x : G}
 
 variable {y z : G}
 
 theorem conjugate.one_mem : (1 : G) ∈ {a : G | ∃ h, h ∈ H ∧ a = x * h * x⁻¹} := by
-  sorry
+  use 1
+  constructor
+  exact H.one_mem
+  group
 
 theorem conjugate.inv_mem (hy : y ∈ {a : G | ∃ h, h ∈ H ∧ a = x * h * x⁻¹}) :
     y⁻¹ ∈ {a : G | ∃ h, h ∈ H ∧ a = x * h * x⁻¹} := by
-  sorry
+  cases' hy with h hh
+  use h⁻¹
+  constructor
+  exact H.inv_mem hh.left
+  rw [← inv_inv x]
+  rw [← mul_inv_rev h x⁻¹]
+  rw [inv_inv x]
+  rw [← mul_inv_rev]
+  rw [← mul_assoc]
+  rw [inv_inj]
+  exact hh.right
+
 
 theorem conjugate.mul_mem (hy : y ∈ {a : G | ∃ h, h ∈ H ∧ a = x * h * x⁻¹})
     (hz : z ∈ {a : G | ∃ h, h ∈ H ∧ a = x * h * x⁻¹}) :
     y * z ∈ {a : G | ∃ h, h ∈ H ∧ a = x * h * x⁻¹} := by
-  sorry
+  cases' hy with h1 hh1
+  cases' hz with h2 hh2
+  use h1 * h2
+  constructor
+  exact H.mul_mem hh1.left hh2.left
+  rw [hh1.right, hh2.right]
+  group
 
--- Now here's the way to put everything together:
+
 def conjugate (H : Subgroup G) (x : G) : Subgroup G
     where
   carrier := {a : G | ∃ h, h ∈ H ∧ a = x * h * x⁻¹}
