@@ -108,45 +108,67 @@ def conjugate (H : Subgroup G) (x : G) : Subgroup G
   inv_mem' := conjugate.inv_mem
   mul_mem' := conjugate.mul_mem
 
-/-
+-- RESULTS ABOUT CONJUGATES
 
-## The cost of a definition
-
-You might think "we're done with conjugates now". But not so fast!
-
-If we were putting the definition of `conjugate` into mathlib then the next thing we would have to
-do would be to prove a whole bunch of things about it. Every definition in a formalised system
-comes with a cost. If you just make the definition and don't prove theorems about it,
-then other people can't use your definition easily in their theorems.
-
-What kind of theorems would we want to prove about conjugates? We might want to prove
-that if `H ≤ K` then `conjugate H x ≤ conjugate K x`. We might want to prove
-that `conjugate ⊥ x = ⊥` and `conjugate ⊤ x = ⊤`. And we might want to prove
-that if `G` is abelian then `conjugate H x = H` for all `H`. Before we embark on this,
-I had better tell you how to prove that two subgroups of a group are equal in Lean.
-To check two subgroups are equal it suffices to prove they have the same elements:
-this is called "extensionality" for subgroups, and you can make this step using the `ext`
-tactic. I'll show you below.
-
-Let's make some API for conjugates. I'll suggest some names for the lemmas.
-
--/
--- This one is always handy: you will be able to `rw` it when faced with goals
--- of the form `a ∈ conjugate H x`.
 theorem mem_conjugate_iff : a ∈ conjugate H x ↔ ∃ h, h ∈ H ∧ a = x * h * x⁻¹ := by
-  -- true by definition!
   rfl
 
 theorem conjugate_mono (H K : Subgroup G) (h : H ≤ K) : conjugate H x ≤ conjugate K x := by
-  sorry
+  intro y hy
+  rw [mem_conjugate_iff] at *
+  cases' hy with g hg
+  use g
+  constructor
+  apply h
+  exact hg.left
+  exact hg.right
 
 theorem conjugate_bot : conjugate ⊥ x = ⊥ := by
-  sorry
+  ext y
+  constructor
+  <;> rw [mem_conjugate_iff]
+  <;> intro h
+
+  cases' h with g hg
+  rw [Subgroup.mem_bot] at *
+  rw [hg.right]
+  rw [hg.left]
+  group
+
+  rw [Subgroup.mem_bot] at h
+  use 1
+  constructor
+  rw [Subgroup.mem_bot]
+  group
+  exact h
+
 
 theorem conjugate_top : conjugate ⊤ x = ⊤ := by
-  sorry
+  ext y
+  constructor
+  <;> rw [mem_conjugate_iff]
+  <;> intro
+
+  apply Subgroup.mem_top
+
+  use x⁻¹ * y * x
+  constructor
+  apply Subgroup.mem_top
+  group
 
 theorem conjugate_eq_of_abelian (habelian : ∀ a b : G, a * b = b * a) : conjugate H x = H := by
-  sorry
+  ext y
+  constructor
+  <;> rw [mem_conjugate_iff]
+  <;> intro h
 
-end Section7sheet1
+  cases' h with g hg
+  rw [hg.right, habelian]
+  group
+  exact hg.left
+
+  use y
+  constructor
+  exact h
+  rw [habelian]
+  group
