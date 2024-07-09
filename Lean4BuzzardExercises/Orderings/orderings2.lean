@@ -74,7 +74,15 @@ example (h : b ≤ c) : a ⊓ b ≤ a ⊓ c := by
 -- `inf_le_inf_left`, proved above, is helpful here.
 example : (a ⊓ b) ⊔ (a ⊓ c) ≤ a ⊓ (b ⊔ c) := by
   apply sup_le
+  all_goals apply inf_le_inf_left
+  exact le_sup_left
+  exact le_sup_right
+
+#check sup_le_sup_left
 
 -- use `sup_le_sup_left` for this one.
 example : a ⊔ b ⊓ c ≤ (a ⊔ b) ⊓ (a ⊔ c) := by
-  sorry
+  apply le_inf
+  all_goals apply sup_le_sup_left
+  exact inf_le_left
+  exact inf_le_right
