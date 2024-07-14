@@ -2,6 +2,8 @@ import Mathlib.Tactic
 
 /-
 TOPOLOGICAL SPACES 01
+Topological spaces in Lean
+The usual topology in ℝ
 -/
 
 /-
